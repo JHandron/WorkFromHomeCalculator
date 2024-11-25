@@ -6,11 +6,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.StringJoiner;
 
 public class WorkFromHomeGUI extends JFrame {
 
-    private final JDateChooser dateField1;
-    private final JDateChooser dateField2;
+    private final JDateChooser startDateField;
+    private final JDateChooser endDateField;
     private final JComboBox<DayOfWeekUS> comboBox1;
     private final JComboBox<DayOfWeekUS> comboBox2;
     private final JButton calculateButton;
@@ -25,22 +26,22 @@ public class WorkFromHomeGUI extends JFrame {
         this.setLayout(new GridLayout(5, 2));
 
         // Initialize the fields
-        dateField1 = new JDateChooser();
-        dateField2 = new JDateChooser();
+        startDateField = new JDateChooser();
+        endDateField = new JDateChooser();
         comboBox1 = new JComboBox<>(comboBoxValues);
         comboBox2 = new JComboBox<>(comboBoxValues);
         calculateButton = new JButton("Calculate");
 
         // Add labels and fields to the frame
-        dateField1.setDateFormatString("MM/dd/yyyy");
-        dateField2.setDateFormatString("MM/dd/yyyy");
+        startDateField.setDateFormatString("MM/dd/yyyy");
+        endDateField.setDateFormatString("MM/dd/yyyy");
         this.add(new JLabel("Start Date (MM/DD/YYYY):"));
-        this.add(dateField1);
+        this.add(startDateField);
         this.add(new JLabel("End Date (MM/DD/YYYY):"));
-        this.add(dateField2);
-        this.add(new JLabel("Week 1 Work From Home Date:"));
+        this.add(endDateField);
+        this.add(new JLabel("Week 1 Work from Home Date:"));
         this.add(comboBox1);
-        this.add(new JLabel("Week 2 Work From Home Date:"));
+        this.add(new JLabel("Week 2 Work from Home Date:"));
         this.add(comboBox2);
         this.add(calculateButton);
 
@@ -48,12 +49,37 @@ public class WorkFromHomeGUI extends JFrame {
         calculateButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                LocalDate startDate = dateField1.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-                LocalDate endDate = dateField2.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-                DayOfWeekUS weekOneDay = (DayOfWeekUS) comboBox1.getSelectedItem();
-                DayOfWeekUS weekTwoDay = (DayOfWeekUS) comboBox2.getSelectedItem();
-                dateCalculatorController.doCalculation(startDate, endDate, weekOneDay, weekTwoDay);
+                if (validateInput()) {
+                    LocalDate startDate = startDateField.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                    LocalDate endDate = endDateField.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                    DayOfWeekUS weekOneDay = (DayOfWeekUS) comboBox1.getSelectedItem();
+                    DayOfWeekUS weekTwoDay = (DayOfWeekUS) comboBox2.getSelectedItem();
+                    dateCalculatorController.doCalculation(startDate, endDate, weekOneDay, weekTwoDay);
+                }
             }
         });
+    }
+
+    public boolean validateInput(){
+        boolean errorFlag = false;
+        StringJoiner errorMessage = new StringJoiner("\n");
+        if(startDateField.getDate() == null){
+            errorMessage.add("Please input a start date.");
+            errorFlag = true;
+        }
+        if(endDateField.getDate() == null){
+            errorMessage.add("Please input an end date.");
+            errorFlag = true;
+        }
+        if(startDateField.getDate() != null && endDateField.getDate() != null &&
+                endDateField.getDate().before(startDateField.getDate())){
+            errorMessage.add("End date must be after the start date.");
+            errorFlag = true;
+        }
+        if(errorFlag){
+            System.out.println(errorMessage);
+            return false;
+        }
+        return true;
     }
 }

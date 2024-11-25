@@ -1,18 +1,16 @@
+import com.toedter.calendar.JDateChooser;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-
+import java.time.ZoneId;
 
 public class WorkFromHomeGUI extends JFrame {
 
-    private final DateFormat DATE_FORMAT = new SimpleDateFormat("MM/dd/yyyy");
-    private final JFormattedTextField dateField1;
-    private final JFormattedTextField dateField2;
+    private final JDateChooser dateField1;
+    private final JDateChooser dateField2;
     private final JComboBox<DayOfWeekUS> comboBox1;
     private final JComboBox<DayOfWeekUS> comboBox2;
     private final JButton calculateButton;
@@ -27,13 +25,15 @@ public class WorkFromHomeGUI extends JFrame {
         this.setLayout(new GridLayout(5, 2));
 
         // Initialize the fields
-        dateField1 = new JFormattedTextField(DATE_FORMAT);
-        dateField2 = new JFormattedTextField(DATE_FORMAT);
+        dateField1 = new JDateChooser();
+        dateField2 = new JDateChooser();
         comboBox1 = new JComboBox<>(comboBoxValues);
         comboBox2 = new JComboBox<>(comboBoxValues);
         calculateButton = new JButton("Calculate");
 
         // Add labels and fields to the frame
+        dateField1.setDateFormatString("MM/dd/yyyy");
+        dateField2.setDateFormatString("MM/dd/yyyy");
         this.add(new JLabel("Start Date (MM/DD/YYYY):"));
         this.add(dateField1);
         this.add(new JLabel("End Date (MM/DD/YYYY):"));
@@ -48,8 +48,8 @@ public class WorkFromHomeGUI extends JFrame {
         calculateButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                LocalDate startDate = LocalDate.parse(dateField1.getText(), DateTimeFormatter.ofPattern("MM/dd/yyyy"));
-                LocalDate endDate = LocalDate.parse(dateField2.getText(), DateTimeFormatter.ofPattern("MM/dd/yyyy"));
+                LocalDate startDate = dateField1.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                LocalDate endDate = dateField2.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
                 DayOfWeekUS weekOneDay = (DayOfWeekUS) comboBox1.getSelectedItem();
                 DayOfWeekUS weekTwoDay = (DayOfWeekUS) comboBox2.getSelectedItem();
                 dateCalculatorController.doCalculation(startDate, endDate, weekOneDay, weekTwoDay);

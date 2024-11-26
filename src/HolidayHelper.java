@@ -4,19 +4,21 @@ import java.time.temporal.TemporalAdjusters;
 
 import static java.time.temporal.TemporalAdjusters.next;
 
-public class HolidayHelper implements IObservableHoliday {
+public class HolidayHelper {
 
-    //TODO: Implement an observable interface for observed holidays
+    //TODO: Clean up and organize usage of HolidayEnum
 
     //New Year's Day occurs on January 1st.
     public static boolean isNewYears(final LocalDate p_workFromHomeDate){
-        final LocalDate newYearsDay = LocalDate.of(p_workFromHomeDate.getYear(), 1, 1);
+        final LocalDate newYearsDay = LocalDate.of(p_workFromHomeDate.getYear(),
+                                                    HolidayEnum.NEW_YEARS_DAY.getMonth(),
+                                                    HolidayEnum.NEW_YEARS_DAY.getDay());
         return IObservableHoliday.getObservableHolidayDate(newYearsDay).equals(p_workFromHomeDate);
     }
 
     //Martin Luther King Jr. Day occurs on the third Monday in the month of January.
     public static boolean isMLKDay(final LocalDate p_workFromHomeDate){
-        final LocalDate firstDayOfJanuary = LocalDate.of(p_workFromHomeDate.getYear(), 1, 1);
+        final LocalDate firstDayOfJanuary = LocalDate.of(p_workFromHomeDate.getYear(), HolidayEnum.MLK_DAY.getMonth(), 1);
         //If the first day of January is a Monday, then we can use that date to find the second and third Monday
         //Otherwise, we have to find the first Monday of the month, and then chain the second and third Monday using that
         if (DayOfWeek.MONDAY.equals(firstDayOfJanuary.getDayOfWeek())){

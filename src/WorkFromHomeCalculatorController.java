@@ -1,5 +1,9 @@
 import java.time.LocalDate;
+import java.time.format.TextStyle;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
 public class WorkFromHomeCalculatorController {
 
@@ -18,31 +22,56 @@ public class WorkFromHomeCalculatorController {
     }
 
     public void findConflicts(final Collection<LocalDate> p_listWorkFromHomeDates) {
-        for(LocalDate date : p_listWorkFromHomeDates){
-            validate(date);
+        final Map<LocalDate, HolidayEnum> dateConflictMap = new HashMap<>();
+        for (LocalDate date : p_listWorkFromHomeDates) {
+            if (HolidayHelper.isNewYears(date)) {
+                dateConflictMap.put(date, HolidayEnum.NEW_YEARS_DAY);
+            }
+            if (HolidayHelper.isMLKDay(date)) {
+                dateConflictMap.put(date, HolidayEnum.MLK_DAY);
+            }
+            if (HolidayHelper.isLincolnsBirthday(date)) {
+                dateConflictMap.put(date, HolidayEnum.LINCOLNS_BIRTHDAY);
+            }
+            if (HolidayHelper.isPresidentsDay(date)) {
+                dateConflictMap.put(date, HolidayEnum.PRESIDENTS_DAY);
+            }
+            if (HolidayHelper.isMemorialDay(date)) {
+                dateConflictMap.put(date, HolidayEnum.MEMORIAL_DAY);
+            }
+            if (HolidayHelper.isJuneteenth(date)) {
+                dateConflictMap.put(date, HolidayEnum.JUNETEENTH);
+            }
+            if (HolidayHelper.isIndependenceDay(date)) {
+                dateConflictMap.put(date, HolidayEnum.INDEPENDENCE_DAY);
+            }
+            if (HolidayHelper.isLaborDay(date)) {
+                dateConflictMap.put(date, HolidayEnum.LABOR_DAY);
+            }
+            if (HolidayHelper.isColumbusDay(date)) {
+                dateConflictMap.put(date, HolidayEnum.COLUMBUS_DAY);
+            }
+            if (HolidayHelper.isElectionDay(date)) {
+                dateConflictMap.put(date, HolidayEnum.ELECTION_DAY);
+            }
+            if (HolidayHelper.isVeteransDay(date)) {
+                dateConflictMap.put(date, HolidayEnum.VETERANS_DAY);
+            }
+            if (HolidayHelper.isThanksgiving(date)) {
+                dateConflictMap.put(date, HolidayEnum.THANKSGIVING);
+            }
+            if (HolidayHelper.isChristmas(date)) {
+                dateConflictMap.put(date, HolidayEnum.CHRISTMAS);
+            }
         }
-    }
-
-    public void validate(final LocalDate p_date){
-        if (HolidayHelper.isNewYears(p_date) ||
-            HolidayHelper.isMLKDay(p_date) ||
-            HolidayHelper.isLincolnsBirthday(p_date) ||
-            HolidayHelper.isPresidentsDay(p_date) ||
-            HolidayHelper.isMemorialDay(p_date) ||
-            HolidayHelper.isJuneteenth(p_date) ||
-            HolidayHelper.isIndependenceDay(p_date) ||
-            HolidayHelper.isLaborDay(p_date) ||
-            HolidayHelper.isColumbusDay(p_date) ||
-            HolidayHelper.isElectionDay(p_date) ||
-            HolidayHelper.isVeteransDay(p_date) ||
-            HolidayHelper.isThanksgiving(p_date) ||
-            HolidayHelper.isChristmas(p_date))
-        {
-            System.out.println(p_date.getDayOfWeek() + " " + p_date);
-            System.out.println("Conflict found with this date: " + p_date.getDayOfWeek() + ", " + p_date);
-        } else {
-            System.out.println(p_date.getDayOfWeek() + " " + p_date);
+        if (!dateConflictMap.isEmpty()){
+            System.out.println(dateConflictMap.size() + " conflicts found.");
+            for (LocalDate date : p_listWorkFromHomeDates){
+                if (dateConflictMap.containsKey(date)){
+                    System.out.println("Conflict found with this date: " + dateConflictMap.get(date).getDescription() + " - " +
+                            date.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.US) + ", " + date);
+                }
+            }
         }
-        
     }
 }

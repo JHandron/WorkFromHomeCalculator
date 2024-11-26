@@ -60,6 +60,7 @@ public class WorkFromHomeGUI extends JFrame {
         });
     }
 
+    //TODO: Make this spawn a dialog instead of console output
     public boolean validateInput(){
         boolean errorFlag = false;
         StringJoiner errorMessage = new StringJoiner("\n");

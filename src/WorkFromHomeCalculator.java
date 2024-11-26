@@ -56,36 +56,19 @@ public class WorkFromHomeCalculator {
         return p_weekNumber > 52 ? (workFromHomeStartDate.getYear() + p_weekNumber / 52) : workFromHomeStartDate.getYear();
     }
 
-    public LocalDate getWorkFromHomeStartDate() {
-        return workFromHomeStartDate;
-    }
-
     public void setWorkFromHomeStartDate(LocalDate p_workFromHomeStartDate) {
         workFromHomeStartDate = p_workFromHomeStartDate;
-    }
-
-    public LocalDate getWorkFromHomeEndDate() {
-        return workFromHomeEndDate;
     }
 
     public void setWorkFromHomeEndDate(LocalDate p_workFromHomeEndDate) {
         workFromHomeEndDate = p_workFromHomeEndDate;
     }
 
-    public DayOfWeekUS getWeekOneDay() {
-        return weekOneDay;
-    }
-
     public void setWeekOneDay(DayOfWeekUS weekOneDay) {
         this.weekOneDay = weekOneDay;
-    }
-
-    public DayOfWeekUS getWeekTwoDay() {
-        return weekTwoDay;
     }
 
     public void setWeekTwoDay(DayOfWeekUS weekTwoDate) {
         this.weekTwoDay = weekTwoDate;
     }
-
 }

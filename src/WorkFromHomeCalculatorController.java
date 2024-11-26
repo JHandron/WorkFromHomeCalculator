@@ -9,21 +9,22 @@ public class WorkFromHomeCalculatorController {
 
     private final WorkFromHomeCalculator workFromHomeCalculator = new WorkFromHomeCalculator();
 
-    public void doCalculation(LocalDate p_startDate, LocalDate p_endDate, DayOfWeekUS p_weekOneDay, DayOfWeekUS p_weekTwoDay){
+    public Map<LocalDate, HolidayEnum> doCalculation(LocalDate p_startDate, LocalDate p_endDate, DayOfWeekUS p_weekOneDay, DayOfWeekUS p_weekTwoDay) {
         setValues(p_startDate, p_endDate, p_weekOneDay, p_weekTwoDay);
-        findConflicts(workFromHomeCalculator.getWorkFromHomeDates());
+        return findConflicts(workFromHomeCalculator.getWorkFromHomeDates());
     }
 
-    public void setValues(LocalDate p_startDate, LocalDate p_endDate, DayOfWeekUS p_weekOneDay, DayOfWeekUS p_weekTwoDay){
+    public void setValues(LocalDate p_startDate, LocalDate p_endDate, DayOfWeekUS p_weekOneDay, DayOfWeekUS p_weekTwoDay) {
         workFromHomeCalculator.setWorkFromHomeStartDate(p_startDate);
         workFromHomeCalculator.setWorkFromHomeEndDate(p_endDate);
         workFromHomeCalculator.setWeekOneDay(p_weekOneDay);
         workFromHomeCalculator.setWeekTwoDay(p_weekTwoDay);
     }
 
-    public void findConflicts(final Collection<LocalDate> p_listWorkFromHomeDates) {
+    public Map<LocalDate, HolidayEnum> findConflicts(final Collection<LocalDate> p_listWorkFromHomeDates) {
         final Map<LocalDate, HolidayEnum> dateConflictMap = new HashMap<>();
         for (LocalDate date : p_listWorkFromHomeDates) {
+            dateConflictMap.put(date, null);
             if (HolidayHelper.isNewYears(date)) {
                 dateConflictMap.put(date, HolidayEnum.NEW_YEARS_DAY);
             }
@@ -64,14 +65,15 @@ public class WorkFromHomeCalculatorController {
                 dateConflictMap.put(date, HolidayEnum.CHRISTMAS);
             }
         }
-        if (!dateConflictMap.isEmpty()){
-            System.out.println(dateConflictMap.size() + " conflicts found.");
-            for (LocalDate date : p_listWorkFromHomeDates){
-                if (dateConflictMap.containsKey(date)){
-                    System.out.println("Conflict found with this date: " + dateConflictMap.get(date).getDescription() + " - " +
-                            date.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.US) + ", " + date);
-                }
-            }
-        }
+//        if (!dateConflictMap.isEmpty()) {
+//            System.out.println(dateConflictMap.size() + " conflicts found.");
+//            for (LocalDate date : p_listWorkFromHomeDates) {
+//                if (dateConflictMap.containsKey(date)) {
+//                    System.out.println("Conflict found with this date: " + dateConflictMap.get(date).getDescription() + " - " +
+//                            date.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.US) + ", " + date);
+//                }
+//            }
+//        }
+        return dateConflictMap;
     }
 }

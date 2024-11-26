@@ -6,6 +6,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.TextStyle;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
 import java.util.StringJoiner;
 
 public class WorkFromHomeGUI extends JFrame {
@@ -54,22 +59,22 @@ public class WorkFromHomeGUI extends JFrame {
                     LocalDate endDate = endDateField.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
                     DayOfWeekUS weekOneDay = (DayOfWeekUS) comboBox1.getSelectedItem();
                     DayOfWeekUS weekTwoDay = (DayOfWeekUS) comboBox2.getSelectedItem();
-                    dateCalculatorController.doCalculation(startDate, endDate, weekOneDay, weekTwoDay);
+                    Map<LocalDate, HolidayEnum> conflictMap = dateCalculatorController.doCalculation(startDate, endDate, weekOneDay, weekTwoDay);
+                    showResultsMessage(conflictMap);
                 }
             }
         });
     }
 
-    //TODO: Make this spawn a dialog instead of console output
     public boolean validateInput(){
         boolean errorFlag = false;
         StringJoiner errorMessage = new StringJoiner("\n");
         if (startDateField.getDate() == null){
-            errorMessage.add("Please input a start date.");
+            errorMessage.add("Please input a valid start date.");
             errorFlag = true;
         }
         if (endDateField.getDate() == null){
-            errorMessage.add("Please input an end date.");
+            errorMessage.add("Please input a valid end date.");
             errorFlag = true;
         }
         if (startDateField.getDate() != null && endDateField.getDate() != null &&
@@ -78,9 +83,30 @@ public class WorkFromHomeGUI extends JFrame {
             errorFlag = true;
         }
         if (errorFlag){
-            System.out.println(errorMessage);
+            JOptionPane.showMessageDialog(this, errorMessage, "Invalid Input", JOptionPane.ERROR_MESSAGE);
             return false;
         }
         return true;
+    }
+
+    public void showResultsMessage(Map<LocalDate, HolidayEnum> p_conflictMap){
+        final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+        final StringBuilder sb = new StringBuilder();
+        final long conflicts = p_conflictMap.values().stream().filter(Objects::nonNull).count();
+        if (conflicts > 0){
+            sb.append(conflicts);
+            sb.append(" conflicts found with this work from home schedule\n");
+        }
+        for (LocalDate date : p_conflictMap.keySet()) {
+            sb.append(date.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.US));
+            sb.append(" ");
+            sb.append(date.format(formatter));
+            if (p_conflictMap.get(date) != null){
+                sb.append("\n\tConflict with this date: ");
+                sb.append(p_conflictMap.get(date).getDescription());
+            }
+            sb.append("\n");
+        }
+        JOptionPane.showMessageDialog(this, sb, "Results", JOptionPane.INFORMATION_MESSAGE);
     }
 }

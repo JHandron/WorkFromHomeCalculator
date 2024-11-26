@@ -63,20 +63,20 @@ public class WorkFromHomeGUI extends JFrame {
     public boolean validateInput(){
         boolean errorFlag = false;
         StringJoiner errorMessage = new StringJoiner("\n");
-        if(startDateField.getDate() == null){
+        if (startDateField.getDate() == null){
             errorMessage.add("Please input a start date.");
             errorFlag = true;
         }
-        if(endDateField.getDate() == null){
+        if (endDateField.getDate() == null){
             errorMessage.add("Please input an end date.");
             errorFlag = true;
         }
-        if(startDateField.getDate() != null && endDateField.getDate() != null &&
+        if (startDateField.getDate() != null && endDateField.getDate() != null &&
                 endDateField.getDate().before(startDateField.getDate())){
             errorMessage.add("End date must be after the start date.");
             errorFlag = true;
         }
-        if(errorFlag){
+        if (errorFlag){
             System.out.println(errorMessage);
             return false;
         }

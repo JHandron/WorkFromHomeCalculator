@@ -1,6 +1,5 @@
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.MonthDay;
 import java.time.temporal.TemporalAdjusters;
 
 import static java.time.temporal.TemporalAdjusters.next;
@@ -11,9 +10,8 @@ public class HolidayHelper implements IObservableHoliday {
 
     //New Year's Day occurs on January 1st.
     public static boolean isNewYears(final LocalDate p_workFromHomeDate){
-        final MonthDay newYearsDay = MonthDay.of(1, 1);
-        final MonthDay workFromHomeDate = MonthDay.from(p_workFromHomeDate);
-        return newYearsDay.equals(workFromHomeDate);
+        final LocalDate newYearsDay = LocalDate.of(p_workFromHomeDate.getYear(), 1, 1);
+        return IObservableHoliday.getObservableHolidayDate(newYearsDay).equals(p_workFromHomeDate);
     }
 
     //Martin Luther King Jr. Day occurs on the third Monday in the month of January.
@@ -21,7 +19,7 @@ public class HolidayHelper implements IObservableHoliday {
         final LocalDate firstDayOfJanuary = LocalDate.of(p_workFromHomeDate.getYear(), 1, 1);
         //If the first day of January is a Monday, then we can use that date to find the second and third Monday
         //Otherwise, we have to find the first Monday of the month, and then chain the second and third Monday using that
-        if (firstDayOfJanuary.getDayOfWeek().equals(DayOfWeek.MONDAY)){
+        if (DayOfWeek.MONDAY.equals(firstDayOfJanuary.getDayOfWeek())){
             final LocalDate secondMondayofJanuary = firstDayOfJanuary.with(next(DayOfWeek.MONDAY));
             final LocalDate MLKDay = secondMondayofJanuary.with(next(DayOfWeek.MONDAY));
             return MLKDay.equals(p_workFromHomeDate);
@@ -35,9 +33,8 @@ public class HolidayHelper implements IObservableHoliday {
 
     //Lincoln's Birthday occurs on February 12th.
     public static boolean isLincolnsBirthday(final LocalDate p_workFromHomeDate){
-        final MonthDay lincolnsBirthday = MonthDay.of(6, 19);
-        final MonthDay workFromHomeDate = MonthDay.from(p_workFromHomeDate);
-        return lincolnsBirthday.equals(workFromHomeDate);
+        final LocalDate lincolnsBirthday = LocalDate.of(p_workFromHomeDate.getYear(), 6, 19);
+        return IObservableHoliday.getObservableHolidayDate(lincolnsBirthday).equals(p_workFromHomeDate);
     }
 
     //President's Day occurs on the third Monday in the month of February.
@@ -45,7 +42,7 @@ public class HolidayHelper implements IObservableHoliday {
         final LocalDate firstDayOfFebruary = LocalDate.of(p_workFromHomeDate.getYear(), 1, 1);
         //If the first day of January is a Monday, then we can use that date to find the second and third Monday
         //Otherwise, we have to find the first Monday of the month, and then chain the second and third Monday using that
-        if (firstDayOfFebruary.getDayOfWeek().equals(DayOfWeek.MONDAY)){
+        if (DayOfWeek.MONDAY.equals(firstDayOfFebruary.getDayOfWeek())){
             final LocalDate secondMondayofFebruary = firstDayOfFebruary.with(next(DayOfWeek.MONDAY));
             final LocalDate presidentsDay = secondMondayofFebruary.with(next(DayOfWeek.MONDAY));
             return presidentsDay.equals(p_workFromHomeDate);
@@ -66,29 +63,27 @@ public class HolidayHelper implements IObservableHoliday {
 
     //Juneteenth occurs on June 19th.
     public static boolean isJuneteenth(final LocalDate p_workFromHomeDate){
-        final MonthDay juneteenth = MonthDay.of(6, 19);
-        final MonthDay workFromHomeDate = MonthDay.from(p_workFromHomeDate);
-        return juneteenth.equals(workFromHomeDate);
+        final LocalDate juneteenth = LocalDate.of(p_workFromHomeDate.getYear(), 6, 19);
+        return IObservableHoliday.getObservableHolidayDate(juneteenth).equals(p_workFromHomeDate);
     }
 
     //Independence Day occurs on July 4th.
     public static boolean isIndependenceDay(final LocalDate p_workFromHomeDate){
-        final MonthDay independenceDay = MonthDay.of(7, 4);
-        final MonthDay workFromHomeDate = MonthDay.from(p_workFromHomeDate);
-        return independenceDay.equals(workFromHomeDate);
+        final LocalDate independenceDay = LocalDate.of(p_workFromHomeDate.getYear(), 7, 4);
+        return IObservableHoliday.getObservableHolidayDate(independenceDay).equals(p_workFromHomeDate);
     }
 
     //Labor Day occurs on the first Monday in the month of September.
     public static boolean isLaborDay(final LocalDate p_workFromHomeDate){
         final LocalDate firstDayOfSeptember = LocalDate.of(p_workFromHomeDate.getYear(), 9, 1);
-        return firstDayOfSeptember.getDayOfWeek().equals(DayOfWeek.MONDAY) ?
+        return DayOfWeek.MONDAY.equals(firstDayOfSeptember.getDayOfWeek()) ?
                     firstDayOfSeptember.equals(p_workFromHomeDate) : firstDayOfSeptember.with(next(DayOfWeek.MONDAY)).equals(p_workFromHomeDate);
     }
 
     //Columbus Day is observed on the second Monday in the month of October.
     public static boolean isColumbusDay(final LocalDate p_workFromHomeDate){
         final LocalDate firstDayOfOctober = LocalDate.of(p_workFromHomeDate.getYear(), 10, 1);
-        if (firstDayOfOctober.getDayOfWeek().equals(DayOfWeek.MONDAY)){
+        if (DayOfWeek.MONDAY.equals(firstDayOfOctober.getDayOfWeek())){
             final LocalDate columbusDay = firstDayOfOctober.with(next(DayOfWeek.MONDAY));
             return columbusDay.equals(p_workFromHomeDate);
         } else {
@@ -103,7 +98,7 @@ public class HolidayHelper implements IObservableHoliday {
         final LocalDate firstDayOfNovember = LocalDate.of(p_workFromHomeDate.getYear(), 11, 1);
         //If the first day of November is a Monday, just find the following Tuesday to compare
         //Otherwise, find the first Monday of the month and then find the following Tuesday
-        if (firstDayOfNovember.getDayOfWeek().equals(DayOfWeek.MONDAY)){
+        if (DayOfWeek.MONDAY.equals(firstDayOfNovember.getDayOfWeek())){
             return firstDayOfNovember.with(next(DayOfWeek.TUESDAY)).equals(p_workFromHomeDate);
         } else {
             final LocalDate firstMonday = firstDayOfNovember.with(next(DayOfWeek.MONDAY));
@@ -114,16 +109,14 @@ public class HolidayHelper implements IObservableHoliday {
 
     //Veteran's Day occurs on November 11th.
     public static boolean isVeteransDay(final LocalDate p_workFromHomeDate){
-        final MonthDay veteransDay = MonthDay.of(11, 11);
-        final MonthDay workFromHomeDate = MonthDay.from(p_workFromHomeDate);
-        return veteransDay.equals(workFromHomeDate);
+        final LocalDate veteransDay = LocalDate.of(p_workFromHomeDate.getYear(), 11, 11);
+        return IObservableHoliday.getObservableHolidayDate(veteransDay).equals(p_workFromHomeDate);
     }
 
     //Thanksgiving occurs on the fourth Thursday in the month of November.
     public static boolean isThanksgiving(final LocalDate p_workFromHomeDate){
         final LocalDate firstDayOfNovember = LocalDate.of(p_workFromHomeDate.getYear(), 11, 1);
-
-        if (firstDayOfNovember.getDayOfWeek().equals(DayOfWeek.THURSDAY)){
+        if (DayOfWeek.THURSDAY.equals(firstDayOfNovember.getDayOfWeek())){
             final LocalDate secondThursdayOfNovember = firstDayOfNovember.with(next(DayOfWeek.THURSDAY));
             final LocalDate thirdThursdayOfNovember = secondThursdayOfNovember.with(next(DayOfWeek.THURSDAY));
             final LocalDate thanskgiving = thirdThursdayOfNovember.with(next(DayOfWeek.THURSDAY));
@@ -139,14 +132,7 @@ public class HolidayHelper implements IObservableHoliday {
 
     //Christmas occurs on December 25th.
     public static boolean isChristmas(final LocalDate p_workFromHomeDate){
-        final MonthDay christmasDay = MonthDay.of(12, 25);
-        final MonthDay workFromHomeDate = MonthDay.from(p_workFromHomeDate);
-        return christmasDay.equals(workFromHomeDate);
-    }
-
-    //TODO: This should calculate the observed holiday date for fixed-date holidays
-    @Override
-    public LocalDate getObservableHolidayDate() {
-        return null;
+        final LocalDate christmasDay = LocalDate.of(p_workFromHomeDate.getYear(), 12, 25);
+        return IObservableHoliday.getObservableHolidayDate(christmasDay).equals(p_workFromHomeDate);
     }
 }

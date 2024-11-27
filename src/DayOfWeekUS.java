@@ -1,3 +1,6 @@
+import java.util.HashMap;
+import java.util.Map;
+
 public enum DayOfWeekUS {
 
     //This enum is used in favor of DayOfWeek when needing an integer value returned from the enum
@@ -14,9 +17,20 @@ public enum DayOfWeekUS {
     private final int value;
     private final String description;
 
-    DayOfWeekUS(int p_value, String p_weekDay){
+
+
+    DayOfWeekUS(int p_value, String p_description){
         value = p_value;
-        description = p_weekDay;
+        description = p_description;
+    }
+
+    public static DayOfWeekUS getEnumByDescription(String p_description){
+        for (DayOfWeekUS day : DayOfWeekUS.values()){
+            if (day.description.equals(p_description)){
+                return day;
+            }
+        }
+        return null;
     }
 
     public int getValue(){

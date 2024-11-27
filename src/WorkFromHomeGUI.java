@@ -1,11 +1,11 @@
 import com.toedter.calendar.JDateChooser;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -20,8 +20,8 @@ public class WorkFromHomeGUI extends JFrame {
     private final JPanel inputPanel;
     private final JDateChooser startDateField;
     private final JDateChooser endDateField;
-    private final JComboBox<DayOfWeekUS> comboBox1;
-    private final JComboBox<DayOfWeekUS> comboBox2;
+    private final JComboBox<String> comboBox1;
+    private final JComboBox<String> comboBox2;
     private final JButton calculateButton;
 
     private final DefaultTableModel tableModel;
@@ -29,9 +29,13 @@ public class WorkFromHomeGUI extends JFrame {
     private final JScrollPane tableScrollPane;
     private final JSplitPane splitPane;
 
-    private final String[] columnNames = {"Date", "Conflict"};
-    private final DayOfWeekUS[] comboBoxValues = {DayOfWeekUS.MONDAY, DayOfWeekUS.TUESDAY, DayOfWeekUS.WEDNESDAY, DayOfWeekUS.THURSDAY, DayOfWeekUS.FRIDAY};
-    private final WorkFromHomeCalculatorController dateCalculatorController = new WorkFromHomeCalculatorController();
+    private final WorkFromHomeCalculatorController calculatorController = new WorkFromHomeCalculatorController();
+    private final String[] columnNames = {"Day", "Date", "Conflict"};
+    private final String[] comboBoxValues = {DayOfWeekUS.MONDAY.getDescription(),
+                                             DayOfWeekUS.TUESDAY.getDescription(),
+                                             DayOfWeekUS.WEDNESDAY.getDescription(),
+                                             DayOfWeekUS.THURSDAY.getDescription(),
+                                             DayOfWeekUS.FRIDAY.getDescription()};
 
     public WorkFromHomeGUI() {
         this.setTitle("DoT Work From Home Calculator");
@@ -60,14 +64,20 @@ public class WorkFromHomeGUI extends JFrame {
         inputPanel.add(comboBox2);
         inputPanel.add(calculateButton);
 
-        tableModel = new DefaultTableModel(columnNames, 0);
+        tableModel = new DefaultTableModel(columnNames, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; // All cells are non-editable
+            }
+        };
         table = new JTable(tableModel);
         tableScrollPane = new JScrollPane(table);
         TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(tableModel);
         table.setRowSorter(sorter);
 
+
         splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, inputPanel, tableScrollPane);
-        splitPane.setDividerLocation(150); // Set the initial position of the divider splitPane.setResizeWeight(0.5
+        splitPane.setDividerLocation(170); // Set the initial position of the divider splitPane.setResizeWeight(0.5
         splitPane.setResizeWeight(0.5);
         this.add(splitPane);
 
@@ -76,9 +86,9 @@ public class WorkFromHomeGUI extends JFrame {
             if (validateInput()) {
                 LocalDate startDate = startDateField.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
                 LocalDate endDate = endDateField.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-                DayOfWeekUS weekOneDay = (DayOfWeekUS) comboBox1.getSelectedItem();
-                DayOfWeekUS weekTwoDay = (DayOfWeekUS) comboBox2.getSelectedItem();
-                final Map<LocalDate, HolidayEnum> conflictMap = dateCalculatorController.doCalculation(startDate, endDate, weekOneDay, weekTwoDay);
+                DayOfWeekUS weekOneDay = DayOfWeekUS.getEnumByDescription((String) comboBox1.getSelectedItem());
+                DayOfWeekUS weekTwoDay = DayOfWeekUS.getEnumByDescription((String) comboBox2.getSelectedItem());
+                final Map<LocalDate, HolidayEnum> conflictMap = calculatorController.doCalculation(startDate, endDate, weekOneDay, weekTwoDay);
                 updateTable(conflictMap);
             }
         });
@@ -88,12 +98,14 @@ public class WorkFromHomeGUI extends JFrame {
         final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
         tableModel.setRowCount(0);
         for (Map.Entry<LocalDate, HolidayEnum> entry : p_conflictMap.entrySet()) {
-            tableModel.addRow(new Object[]{entry.getKey(),
-                    entry.getValue() != null ? entry.getValue().getDescription(): null});
+            tableModel.addRow(new Object[]{entry.getKey().getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.US),
+                                           entry.getKey(),
+                                           entry.getValue() != null ? entry.getValue().getDescription(): null});
         }
+        tableScrollPane.setBorder(BorderFactory.createTitledBorder(p_conflictMap.values().stream().filter(Objects::nonNull).count() + " conflicts found with this schedule."));
+
         tableModel.fireTableDataChanged();
     }
-
 
     public boolean validateInput(){
         boolean errorFlag = false;
@@ -138,5 +150,4 @@ public class WorkFromHomeGUI extends JFrame {
         }
         JOptionPane.showMessageDialog(this, sb, "Results", JOptionPane.INFORMATION_MESSAGE);
     }
-
 }

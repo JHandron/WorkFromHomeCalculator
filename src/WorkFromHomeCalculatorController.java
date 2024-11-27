@@ -65,15 +65,6 @@ public class WorkFromHomeCalculatorController {
                 dateConflictMap.put(date, HolidayEnum.CHRISTMAS);
             }
         }
-//        if (!dateConflictMap.isEmpty()) {
-//            System.out.println(dateConflictMap.size() + " conflicts found.");
-//            for (LocalDate date : p_listWorkFromHomeDates) {
-//                if (dateConflictMap.containsKey(date)) {
-//                    System.out.println("Conflict found with this date: " + dateConflictMap.get(date).getDescription() + " - " +
-//                            date.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.US) + ", " + date);
-//                }
-//            }
-//        }
         return dateConflictMap;
     }
 }

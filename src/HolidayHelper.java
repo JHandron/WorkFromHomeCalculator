@@ -35,13 +35,13 @@ public class HolidayHelper {
 
     //Lincoln's Birthday occurs on February 12th.
     public static boolean isLincolnsBirthday(final LocalDate p_workFromHomeDate){
-        final LocalDate lincolnsBirthday = LocalDate.of(p_workFromHomeDate.getYear(), 6, 19);
+        final LocalDate lincolnsBirthday = LocalDate.of(p_workFromHomeDate.getYear(), 2, 12);
         return IObservableHoliday.getObservableHolidayDate(lincolnsBirthday).equals(p_workFromHomeDate);
     }
 
     //President's Day occurs on the third Monday in the month of February.
     public static boolean isPresidentsDay(final LocalDate p_workFromHomeDate){
-        final LocalDate firstDayOfFebruary = LocalDate.of(p_workFromHomeDate.getYear(), 1, 1);
+        final LocalDate firstDayOfFebruary = LocalDate.of(p_workFromHomeDate.getYear(), 2, 1);
         //If the first day of January is a Monday, then we can use that date to find the second and third Monday
         //Otherwise, we have to find the first Monday of the month, and then chain the second and third Monday using that
         if (DayOfWeek.MONDAY.equals(firstDayOfFebruary.getDayOfWeek())){

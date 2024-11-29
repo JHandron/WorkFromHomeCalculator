@@ -1,19 +1,23 @@
 import com.toedter.calendar.JDateChooser;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.JTableHeader;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.StringJoiner;
+
+//TODO: Look and feel
+//TODO: File writer
+//TODO: Menu items
+//TODO: Layout
+//TODO: Calendar generator
 
 public class WorkFromHomeGUI extends JFrame {
 
@@ -28,6 +32,12 @@ public class WorkFromHomeGUI extends JFrame {
     private final JTable table;
     private final JScrollPane tableScrollPane;
     private final JSplitPane splitPane;
+
+    private final JMenuBar menuBar;
+    private final JMenu menu;
+    private final JMenuItem menuItemSave;
+    private final JMenuItem menuItemOpen;
+    private final JMenuItem menuItemExit;
 
     private final WorkFromHomeCalculatorController calculatorController = new WorkFromHomeCalculatorController();
     private final String[] columnNames = {"Day", "Date", "Conflict"};
@@ -50,6 +60,13 @@ public class WorkFromHomeGUI extends JFrame {
         comboBox1 = new JComboBox<>(comboBoxValues);
         comboBox2 = new JComboBox<>(comboBoxValues);
         calculateButton = new JButton("Calculate");
+        menuBar = new JMenuBar();
+        menu = new JMenu("File");
+        menuItemSave = new JMenuItem("Save");
+        menuItemSave.setEnabled(false);
+        menuItemExit = new JMenuItem("Exit");
+        menuItemOpen = new JMenuItem("Open");
+
 
         // Add labels and fields to the frame
         startDateField.setDateFormatString("MM/dd/yyyy");
@@ -63,6 +80,11 @@ public class WorkFromHomeGUI extends JFrame {
         inputPanel.add(new JLabel("Week 2 Work from Home Date:"));
         inputPanel.add(comboBox2);
         inputPanel.add(calculateButton);
+        menu.add(menuItemOpen);
+        menu.add(menuItemSave);
+        menu.addSeparator();
+        menu.add(menuItemExit);
+        menuBar.add(menu);
 
         tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
@@ -75,36 +97,48 @@ public class WorkFromHomeGUI extends JFrame {
         TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(tableModel);
         table.setRowSorter(sorter);
 
-
         splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, inputPanel, tableScrollPane);
-        splitPane.setDividerLocation(170); // Set the initial position of the divider splitPane.setResizeWeight(0.5
+        splitPane.setDividerLocation(150);
         splitPane.setResizeWeight(0.5);
+        this.add(menuBar);
+        this.setJMenuBar(menuBar);
         this.add(splitPane);
 
         //Actions
-        calculateButton.addActionListener(e -> {
-            if (validateInput()) {
-                LocalDate startDate = startDateField.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-                LocalDate endDate = endDateField.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-                DayOfWeekUS weekOneDay = DayOfWeekUS.getEnumByDescription((String) comboBox1.getSelectedItem());
-                DayOfWeekUS weekTwoDay = DayOfWeekUS.getEnumByDescription((String) comboBox2.getSelectedItem());
-                final Map<LocalDate, HolidayEnum> conflictMap = calculatorController.doCalculation(startDate, endDate, weekOneDay, weekTwoDay);
-                updateTable(conflictMap);
-            }
-        });
+        calculateButton.addActionListener(this::calculateButtonClicked);
+        menuItemExit.addActionListener(this::menuItemExitClicked);
     }
 
-    public void updateTable(Map<LocalDate, HolidayEnum> p_conflictMap){
-        final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+    public void calculateButtonClicked(ActionEvent e){
+        if (validateInput()) {
+            final LocalDate startDate = startDateField.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            final LocalDate endDate = endDateField.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            final DayOfWeekUS weekOneDay = DayOfWeekUS.getEnumByDescription((String) comboBox1.getSelectedItem());
+            final DayOfWeekUS weekTwoDay = DayOfWeekUS.getEnumByDescription((String) comboBox2.getSelectedItem());
+            final Map<LocalDate, HolidayEnum> conflictMap = calculatorController.doCalculation(startDate, endDate, weekOneDay, weekTwoDay);
+            updateTable(conflictMap);
+        }
+    }
+
+    public void updateTable(Map<LocalDate, HolidayEnum> p_conflictMap){;
         tableModel.setRowCount(0);
         for (Map.Entry<LocalDate, HolidayEnum> entry : p_conflictMap.entrySet()) {
             tableModel.addRow(new Object[]{entry.getKey().getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.US),
                                            entry.getKey(),
                                            entry.getValue() != null ? entry.getValue().getDescription(): null});
         }
-        tableScrollPane.setBorder(BorderFactory.createTitledBorder(p_conflictMap.values().stream().filter(Objects::nonNull).count() + " conflicts found with this schedule."));
-
+        tableScrollPane.setBorder(BorderFactory.createTitledBorder(p_conflictMap.values().stream().filter(Objects::nonNull).count() + " conflict(s) found with this schedule."));
         tableModel.fireTableDataChanged();
+        menuItemSave.setEnabled(true);
+    }
+
+    public void menuItemExitClicked(ActionEvent e){
+        int response = JOptionPane.showConfirmDialog(this, "Do you want to exit?", "Exit Application", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        if (response == JOptionPane.YES_OPTION){
+            System.exit(0);
+        } else {
+            return;
+        }
     }
 
     public boolean validateInput(){
@@ -130,24 +164,24 @@ public class WorkFromHomeGUI extends JFrame {
         return true;
     }
 
-    public void showResultsMessage(Map<LocalDate, HolidayEnum> p_conflictMap){
-        final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-        final StringBuilder sb = new StringBuilder();
-        final long conflicts = p_conflictMap.values().stream().filter(Objects::nonNull).count();
-        if (conflicts > 0){
-            sb.append(conflicts);
-            sb.append(" conflicts found with this work from home schedule\n");
-        }
-        for (LocalDate date : p_conflictMap.keySet()) {
-            sb.append(date.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.US));
-            sb.append(" ");
-            sb.append(date.format(formatter));
-            if (p_conflictMap.get(date) != null){
-                sb.append("\n\tConflict with this date: ");
-                sb.append(p_conflictMap.get(date).getDescription());
-            }
-            sb.append("\n");
-        }
-        JOptionPane.showMessageDialog(this, sb, "Results", JOptionPane.INFORMATION_MESSAGE);
-    }
+//    public void showResultsMessage(Map<LocalDate, HolidayEnum> p_conflictMap){
+//        final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+//        final StringBuilder sb = new StringBuilder();
+//        final long conflicts = p_conflictMap.values().stream().filter(Objects::nonNull).count();
+//        if (conflicts > 0){
+//            sb.append(conflicts);
+//            sb.append(" conflicts found with this work from home schedule\n");
+//        }
+//        for (LocalDate date : p_conflictMap.keySet()) {
+//            sb.append(date.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.US));
+//            sb.append(" ");
+//            sb.append(date.format(formatter));
+//            if (p_conflictMap.get(date) != null){
+//                sb.append("\n\tConflict with this date: ");
+//                sb.append(p_conflictMap.get(date).getDescription());
+//            }
+//            sb.append("\n");
+//        }
+//        JOptionPane.showMessageDialog(this, sb, "Results", JOptionPane.INFORMATION_MESSAGE);
+//    }
 }

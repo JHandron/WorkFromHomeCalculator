@@ -6,13 +6,9 @@ import static java.time.temporal.TemporalAdjusters.next;
 
 public class HolidayHelper {
 
-    //TODO: Clean up and organize usage of HolidayEnum
-
     //New Year's Day occurs on January 1st.
     public static boolean isNewYears(final LocalDate p_workFromHomeDate){
-        final LocalDate newYearsDay = LocalDate.of(p_workFromHomeDate.getYear(),
-                                                    HolidayEnum.NEW_YEARS_DAY.getMonth(),
-                                                    HolidayEnum.NEW_YEARS_DAY.getDay());
+        final LocalDate newYearsDay = LocalDate.of(p_workFromHomeDate.getYear(), HolidayEnum.NEW_YEARS_DAY.getMonth(), HolidayEnum.NEW_YEARS_DAY.getDay());
         return IObservableHoliday.getObservableHolidayDate(newYearsDay).equals(p_workFromHomeDate);
     }
 
@@ -35,13 +31,13 @@ public class HolidayHelper {
 
     //Lincoln's Birthday occurs on February 12th.
     public static boolean isLincolnsBirthday(final LocalDate p_workFromHomeDate){
-        final LocalDate lincolnsBirthday = LocalDate.of(p_workFromHomeDate.getYear(), 2, 12);
+        final LocalDate lincolnsBirthday = LocalDate.of(p_workFromHomeDate.getYear(), HolidayEnum.LINCOLNS_BIRTHDAY.getMonth(), HolidayEnum.LINCOLNS_BIRTHDAY.getDay());
         return IObservableHoliday.getObservableHolidayDate(lincolnsBirthday).equals(p_workFromHomeDate);
     }
 
     //President's Day occurs on the third Monday in the month of February.
     public static boolean isPresidentsDay(final LocalDate p_workFromHomeDate){
-        final LocalDate firstDayOfFebruary = LocalDate.of(p_workFromHomeDate.getYear(), 2, 1);
+        final LocalDate firstDayOfFebruary = LocalDate.of(p_workFromHomeDate.getYear(), HolidayEnum.PRESIDENTS_DAY.getMonth(), 1);
         //If the first day of January is a Monday, then we can use that date to find the second and third Monday
         //Otherwise, we have to find the first Monday of the month, and then chain the second and third Monday using that
         if (DayOfWeek.MONDAY.equals(firstDayOfFebruary.getDayOfWeek())){
@@ -58,33 +54,33 @@ public class HolidayHelper {
 
     //Memorial Day occurs on the last Monday in the month of May.
     public static boolean isMemorialDay(final LocalDate p_workFromHomeDate){
-        final LocalDate firstDayofMay = LocalDate.of(p_workFromHomeDate.getYear(), 5, 1);
+        final LocalDate firstDayofMay = LocalDate.of(p_workFromHomeDate.getYear(), HolidayEnum.MEMORIAL_DAY.getMonth(), 1);
         final LocalDate memorialDay = firstDayofMay.with((TemporalAdjusters.lastInMonth(DayOfWeek.MONDAY)));
         return memorialDay.equals(p_workFromHomeDate);
     }
 
     //Juneteenth occurs on June 19th.
     public static boolean isJuneteenth(final LocalDate p_workFromHomeDate){
-        final LocalDate juneteenth = LocalDate.of(p_workFromHomeDate.getYear(), 6, 19);
+        final LocalDate juneteenth = LocalDate.of(p_workFromHomeDate.getYear(), HolidayEnum.JUNETEENTH.getMonth(), HolidayEnum.JUNETEENTH.getDay());
         return IObservableHoliday.getObservableHolidayDate(juneteenth).equals(p_workFromHomeDate);
     }
 
     //Independence Day occurs on July 4th.
     public static boolean isIndependenceDay(final LocalDate p_workFromHomeDate){
-        final LocalDate independenceDay = LocalDate.of(p_workFromHomeDate.getYear(), 7, 4);
+        final LocalDate independenceDay = LocalDate.of(p_workFromHomeDate.getYear(), HolidayEnum.INDEPENDENCE_DAY.getMonth(), HolidayEnum.INDEPENDENCE_DAY.getDay());
         return IObservableHoliday.getObservableHolidayDate(independenceDay).equals(p_workFromHomeDate);
     }
 
     //Labor Day occurs on the first Monday in the month of September.
     public static boolean isLaborDay(final LocalDate p_workFromHomeDate){
-        final LocalDate firstDayOfSeptember = LocalDate.of(p_workFromHomeDate.getYear(), 9, 1);
+        final LocalDate firstDayOfSeptember = LocalDate.of(p_workFromHomeDate.getYear(), HolidayEnum.LABOR_DAY.getMonth(), 1);
         return DayOfWeek.MONDAY.equals(firstDayOfSeptember.getDayOfWeek()) ?
                     firstDayOfSeptember.equals(p_workFromHomeDate) : firstDayOfSeptember.with(next(DayOfWeek.MONDAY)).equals(p_workFromHomeDate);
     }
 
     //Columbus Day is observed on the second Monday in the month of October.
     public static boolean isColumbusDay(final LocalDate p_workFromHomeDate){
-        final LocalDate firstDayOfOctober = LocalDate.of(p_workFromHomeDate.getYear(), 10, 1);
+        final LocalDate firstDayOfOctober = LocalDate.of(p_workFromHomeDate.getYear(), HolidayEnum.COLUMBUS_DAY.getMonth(), 1);
         if (DayOfWeek.MONDAY.equals(firstDayOfOctober.getDayOfWeek())){
             final LocalDate columbusDay = firstDayOfOctober.with(next(DayOfWeek.MONDAY));
             return columbusDay.equals(p_workFromHomeDate);
@@ -97,7 +93,7 @@ public class HolidayHelper {
 
     //Election Day occurs on the Tuesday immediately after the first Monday in November.
     public static boolean isElectionDay(final LocalDate p_workFromHomeDate){
-        final LocalDate firstDayOfNovember = LocalDate.of(p_workFromHomeDate.getYear(), 11, 1);
+        final LocalDate firstDayOfNovember = LocalDate.of(p_workFromHomeDate.getYear(), HolidayEnum.ELECTION_DAY.getMonth(), 1);
         //If the first day of November is a Monday, just find the following Tuesday to compare
         //Otherwise, find the first Monday of the month and then find the following Tuesday
         if (DayOfWeek.MONDAY.equals(firstDayOfNovember.getDayOfWeek())){
@@ -111,13 +107,13 @@ public class HolidayHelper {
 
     //Veteran's Day occurs on November 11th.
     public static boolean isVeteransDay(final LocalDate p_workFromHomeDate){
-        final LocalDate veteransDay = LocalDate.of(p_workFromHomeDate.getYear(), 11, 11);
+        final LocalDate veteransDay = LocalDate.of(p_workFromHomeDate.getYear(), HolidayEnum.VETERANS_DAY.getMonth(), HolidayEnum.VETERANS_DAY.getDay());
         return IObservableHoliday.getObservableHolidayDate(veteransDay).equals(p_workFromHomeDate);
     }
 
     //Thanksgiving occurs on the fourth Thursday in the month of November.
     public static boolean isThanksgiving(final LocalDate p_workFromHomeDate){
-        final LocalDate firstDayOfNovember = LocalDate.of(p_workFromHomeDate.getYear(), 11, 1);
+        final LocalDate firstDayOfNovember = LocalDate.of(p_workFromHomeDate.getYear(), HolidayEnum.THANKSGIVING.getMonth(), 1);
         if (DayOfWeek.THURSDAY.equals(firstDayOfNovember.getDayOfWeek())){
             final LocalDate secondThursdayOfNovember = firstDayOfNovember.with(next(DayOfWeek.THURSDAY));
             final LocalDate thirdThursdayOfNovember = secondThursdayOfNovember.with(next(DayOfWeek.THURSDAY));
@@ -134,7 +130,7 @@ public class HolidayHelper {
 
     //Christmas occurs on December 25th.
     public static boolean isChristmas(final LocalDate p_workFromHomeDate){
-        final LocalDate christmasDay = LocalDate.of(p_workFromHomeDate.getYear(), 12, 25);
+        final LocalDate christmasDay = LocalDate.of(p_workFromHomeDate.getYear(), HolidayEnum.CHRISTMAS.getMonth(), HolidayEnum.CHRISTMAS.getDay());
         return IObservableHoliday.getObservableHolidayDate(christmasDay).equals(p_workFromHomeDate);
     }
 }

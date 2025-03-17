@@ -67,7 +67,6 @@ public class WorkFromHomeGUI extends JFrame {
         menuItemExit = new JMenuItem("Exit");
         menuItemOpen = new JMenuItem("Open");
 
-
         // Add labels and fields to the frame
         startDateField.setDateFormatString("MM/dd/yyyy");
         endDateField.setDateFormatString("MM/dd/yyyy");
@@ -120,7 +119,7 @@ public class WorkFromHomeGUI extends JFrame {
         }
     }
 
-    public void updateTable(Map<LocalDate, HolidayEnum> p_conflictMap){;
+    public void updateTable(Map<LocalDate, HolidayEnum> p_conflictMap){
         tableModel.setRowCount(0);
         for (Map.Entry<LocalDate, HolidayEnum> entry : p_conflictMap.entrySet()) {
             tableModel.addRow(new Object[]{entry.getKey().getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.US),
@@ -136,8 +135,6 @@ public class WorkFromHomeGUI extends JFrame {
         int response = JOptionPane.showConfirmDialog(this, "Do you want to exit?", "Exit Application", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
         if (response == JOptionPane.YES_OPTION){
             System.exit(0);
-        } else {
-            return;
         }
     }
 
@@ -163,25 +160,4 @@ public class WorkFromHomeGUI extends JFrame {
         }
         return true;
     }
-
-//    public void showResultsMessage(Map<LocalDate, HolidayEnum> p_conflictMap){
-//        final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-//        final StringBuilder sb = new StringBuilder();
-//        final long conflicts = p_conflictMap.values().stream().filter(Objects::nonNull).count();
-//        if (conflicts > 0){
-//            sb.append(conflicts);
-//            sb.append(" conflicts found with this work from home schedule\n");
-//        }
-//        for (LocalDate date : p_conflictMap.keySet()) {
-//            sb.append(date.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.US));
-//            sb.append(" ");
-//            sb.append(date.format(formatter));
-//            if (p_conflictMap.get(date) != null){
-//                sb.append("\n\tConflict with this date: ");
-//                sb.append(p_conflictMap.get(date).getDescription());
-//            }
-//            sb.append("\n");
-//        }
-//        JOptionPane.showMessageDialog(this, sb, "Results", JOptionPane.INFORMATION_MESSAGE);
-//    }
 }
